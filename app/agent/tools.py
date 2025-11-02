@@ -1,4 +1,4 @@
-from langchain.tools import Tool
+from langchain_core.tools import Tool
 from langchain_community.tools import DuckDuckGoSearchRun
 from app.rag.vector_store import RAGVectorStore
 from app.utils.logging_config import logger
@@ -11,7 +11,6 @@ except ImportError:
         from langchain_experimental.tools import PythonREPLTool
     except ImportError:
         # 如果都失败，提供一个最小的本地实现
-        from langchain.tools import Tool as BaseTool
         import sys
         from io import StringIO
 

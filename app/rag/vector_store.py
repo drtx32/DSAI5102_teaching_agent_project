@@ -1,5 +1,5 @@
 from langchain_community.vectorstores import Chroma
-from langchain.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from app.rag.document_loader import DocumentProcessor
 from app.utils.config import settings
 from app.utils.logging_config import logger

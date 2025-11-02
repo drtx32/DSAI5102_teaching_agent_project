@@ -1,5 +1,5 @@
-from langchain.memory import ChatMessageHistory
-from langchain.schema import BaseMessage, HumanMessage, AIMessage
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
 import psycopg2
 from psycopg2.extras import Json
 from datetime import datetime
