@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teaching-agent"
+version = "0.1.0"
+description = "Teaching assistant agent with RAG and multiple LLM providers"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "langchain",
+    "langchain-openai",
+    "langchain-anthropic",
+    "langchain-mistralai",
+    "langchain-google-genai",
+    "sentence-transformers",
+    "openai",
+    "chromadb",
+    "streamlit>=1.34.0,<2.0",
+    "pydantic-settings",
+    "PyPDF2",
+]
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teaching-agent"
+version = "0.1.0"
+description = "Teaching assistant agent with RAG and multiple LLM providers"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "langchain",
+    "langchain-openai",
+    "langchain-anthropic",
+    "langchain-mistralai",
+    "langchain-google-genai",
+    "sentence-transformers",
+    "openai",
+    "chromadb",
+    "streamlit>=1.34.0,<2.0",
+    "pydantic-settings",
+    "PyPDF2",
+]
