@@ -33,7 +33,9 @@ python tools/build_vectordb.py
 
 该脚本会读取 PDF、生成 embeddings（项目中使用 Ollama / 指定的 embed 方案），并把 FAISS 索引保存到 `vectordb/faiss`。
 
-5. 启动服务
+5. 重命名 `.streamlit` 文件夹下的 `secrets.toml.example` 为 `secrets.toml`，并修改其中的内容
+
+6. 启动服务
 - 一键并行启动（同时启动 RAG、websearch 与前端 Streamlit）：
 
 ```powershell
@@ -49,7 +51,7 @@ python main.py
 streamlit run 首页.py
 ```
 
-6. 在 Streamlit 页面中使用
+7. 在 Streamlit 页面中使用
 - 点击右下角的设置按钮填写/保存配置（见 `app/module/streamlit_settings_dialog.py`），随后使用 Ask AI 按钮（`app/module/streamlit_ask_ai_dialog.py`）开启对话与检索式问答。
 
 ## 关键文件与目录
