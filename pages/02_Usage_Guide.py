@@ -10,60 +10,71 @@ ask_ai_button()
 st.title("🛠️ 使用方法（快速起步）")
 
 st.markdown("""
-本页包含：运行环境、依赖安装、运行命令、常见配置（在 Windows PowerShell 下的示例）。
+本页只描述已实现并经过测试的功能与最小运行步骤 — 不包含尚未实现的页面或功能。
 """)
 
-st.header("1) 环境与依赖")
+st.header("1) 安装依赖")
 st.markdown("""
-建议使用 Conda 创建一个专用环境，例如 `sml`（项目测试时使用此环境）。
+推荐使用虚拟环境（例如 Conda 或 venv）。项目依赖在 [pyproject.toml](pyproject.toml) 中声明，可以用如下方式安装：
 
-示例安装（PowerShell）：
-```powershell
-conda create -n sml python=3.11 -y; conda activate sml
-pip install -r requirements.txt
-```
+- 可用的快速方式（在项目根目录）：
+  - pip（如果你有 requirements.txt）：`pip install -r requirements.txt`
+  - 或直接从项目安装：`pip install -e .`
 
-`requirements.txt` 应包含 `streamlit`, `langchain`, `langchain-community`, `faiss-cpu` 等依赖。
+请确保安装了关键依赖：Streamlit、FAISS、PyMuPDF、langchain 及相关 provider 包（见 `pyproject.toml`）。
 """)
 
-st.header("2) 必要环境变量")
+st.header("2) 必要配置")
 st.markdown("""
-将以下关键变量设置到环境或 `st.secrets`：
+将 API Key / 端点放入环境变量或 Streamlit secrets（见 `.env.example` 与 `.streamlit/secrets.toml.example`）。
 
-- `OPENAI_API_KEY` (或替代代理的 `OPENAI_BASE_URL`)
-- `ANTHROPIC_API_KEY`（如果使用 Anthropic）
-- `GOOGLE_API_KEY`（如果使用 Google Generative API）
-- `IBM_PROJECT_ID`（如果使用 IBM Watsonx）
-
-PowerShell 设置举例：
-```powershell
-$env:OPENAI_API_KEY = "sk-..."
-$env:OPENAI_BASE_URL = "https://your-proxy.example/v1"
-```
+常用配置项示例（使用环境变量或在设置中填写）：
+- `OPENAI_API_KEY`, `OPENAI_ENDPOINT`
+- `OLLAMA_ENDPOINT`（若使用本地 Ollama）
+- 也可通过页面右下角的设置弹窗进行输入（使用：[`app.module.streamlit_settings_dialog.settings_button`](app/module/streamlit_settings_dialog.py)）。
+查看运行时配置对象：[`app.utils.config.settings`](app/utils/config.py)。
 """)
 
-st.header("3) 启动应用")
-st.code("streamlit run app.py", language="bash")
-st.write("在浏览器打开地址后，主页面提供上传 .docx、构建索引与聊天界面。")
-
-st.header("4) 构建索引（操作步骤）")
+st.header("3) 构建向量索引（当前仅支持 PDF 输入）")
 st.markdown("""
-- 点击左侧 `⚙️ 打开设置` 输入 API Key、选择 LLM/Embeddings 提供商与模型。
-- 在主页面上传一个或多个 `.docx` 文件。
-- 点击 `🚀 Build / Update Index`，观察进度条与提示信息。
-- 构建完成后可在聊天框中提问，系统会基于检索到的上下文生成回答。
+项目目前的向量构建脚本以 PDF 为输入（不是 .docx）。构建流程如下：
+
+1. 将要索引的 PDF 放到 `assets/pdfs/`（或在运行脚本时指定路径）。
+2. 运行向量构建脚本：
+   - `python tools/build_vectordb.py`
+   该脚本会读取 PDF、生成 embeddings（使用 `nomic-embed-text` via Ollama）并保存 FAISS 索引到 `vectordb/faiss`。
+   参考实现：[`tools.build_vectordb.build`](tools/build_vectordb.py)
+
+构建完成后，向量库位于 `vectordb/faiss`，RAG 服务会从该路径加载索引。
 """)
 
-st.header("5) 测试不同厂商")
-st.write("如果你想测试本地 Ollama：")
-with st.expander("Ollama 本地测试要点"):
-    st.markdown("""
-    - 在本地安装并启动 Ollama 服务（默认 `http://localhost:11434`）。
-    - 在设置里选择 `ollama`，并把模型写成 `your-model-name:tag` 或接受默认。
-    - 因为 Ollama 在本地运行，API Key 通常留空。
-    """)
+st.header("4) 启动服务（可选：整组或单独启动）")
+st.markdown("""
+- 一键并行启动（同时启动 RAG、websearch 和 Streamlit 主页面）：
+  - `python main.py`（内部会分别在后台启动 `app/mcp/rag/server.py`、`app/mcp/websearch/server.py` 以及 Streamlit）
+  - 参见启动脚本：[main.py](main.py)
 
-st.success("运行提示：如遇到权限或网络问题，先检查环境变量与防火墙，然后重启 Streamlit 服务。")
+- 单独启动：
+  - 启动 RAG MCP：`python app/mcp/rag/server.py`（服务监听端口 8002，参考：[`app.mcp.rag.server.RAGVectorStore`](app/mcp/rag/server.py)）
+  - 启动 WebSearch MCP：`python app/mcp/websearch/server.py`（端口 8001）
+  - 仅启动前端：`streamlit run 首页.py` 或 `streamlit run app.py`
+
+注意：RAG 服务从 `vectordb/faiss` 加载索引（见：[`app/mcp/rag/server.py`](app/mcp/rag/server.py)），如更新索引可调用 RAG 的 reload 工具或重启服务。
+""")
+
+st.header("5) 使用聊天与 Agent（已实现）")
+st.markdown("""
+- 在 Streamlit 页面启动后，可通过右下角的 Ask AI 按钮（实现：[`app.module.streamlit_ask_ai_dialog.ask_ai_button`](app/module/streamlit_ask_ai_dialog.py)）打开聊天窗口。
+- 后台的 LangGraph Worker 在需要时由前端启动（实现：[`app.agent.worker.LangGraphWorker`](app/agent/worker.py)），它会调用 MCP 的 RAG 与 websearch 工具进行检索式问答。
+- 日志与运行信息记录由：[`app.utils.logging_config.logger`](app/utils/logging_config.py) 管理。
+""")
+
+st.header("6) 常见问题与调试要点")
+st.markdown("""
+- 无法找到向量库：确认 `vectordb/faiss` 是否存在，或在 RAG 服务启动后使用 `reload_vectorstore` 工具重新加载（参见 `app/mcp/rag/server.py`）。
+- 构建失败或 embedding 错误：检查 Ollama / embedding 后端是否可用，以及 CPU/并发限制（构建脚本会使用多进程并行）。
+- 若要测试本地 Ollama，请先启动本地 Ollama 服务并在设置里把 `OLLAMA_ENDPOINT` 指向 `http://localhost:11434`。
+""")
 
 bottom_bar(previous_page="pages/01_Project_Introduction.py",
            previous_alias="Project Introduction",

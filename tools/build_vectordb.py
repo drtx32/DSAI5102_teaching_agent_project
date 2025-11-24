@@ -128,5 +128,5 @@ def build(pdf_paths: List[str], faiss_path="faiss_index"):
 # 🔹 脚本运行
 # -----------------------------
 if __name__ == "__main__":
-    pdfs = list(Path("assets/pdfs").glob("*.pdf"))
+    pdfs = list(Path("assets/pdfs").rglob("*.pdf"))
     build(pdfs, "vectordb/faiss")

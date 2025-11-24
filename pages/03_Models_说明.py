@@ -7,42 +7,63 @@ st.set_page_config(page_title="模型说明", page_icon="🤖")
 settings_button()
 ask_ai_button()
 
-st.title("🤖 模型与 Embeddings 说明")
-
+st.title("🤖 模型说明")
 st.markdown("""
-本页列出项目中常用的 LLM 与 Embeddings 提示、选型建议与注意事项。
+本页基于 `app/llm/llm_provider.py` 的实现，列出当前项目已支持的 LLM 提供商、示例 model 名称、配置要点与选型建议。只包含已实现的功能与包装器说明。
 """)
 
-st.header("LLM 提示与建议")
+st.header("可用 Provider（已实现/常用）")
 st.markdown("""
-- 小模型 vs 大模型：大模型（如 `gpt-4o`/`claude-3`）通常在复杂推理上更好，但延迟与费用更高。
-- 本地模型（Ollama、Mistral 本地部署）快速且可离线测试，但可能需要更多本地资源。
-- 使用温度（`temperature`）控制回答多样性：教学演示建议 `0.0 - 0.3` 保持确定性。
+- `openai`（OpenAI）
+- `azure_openai`（Azure OpenAI）
+- `anthropic`（Anthropic）
+- `google`（Google Generative AI）
+- `ollama`（本地 Ollama）
+- `deepseek`（DeepSeek / DeepSeek R1 包装器）
+- `mistral`（Mistral）
+- `ibm`（WatsonX）
+- 以及少量厂商适配：`moonshot`、`unbound`、`grok`、`alibaba`、`siliconflow`、`modelscope`
 """)
 
-st.header("Embeddings 选型")
+st.header("示例模型名称（快速参考）")
 st.markdown("""
-- 语义搜索一般使用文本嵌入模型（如 OpenAI 的 `text-embedding-3-small` / `text-embedding-3-large`）。
-- 中文任务可选择 `BAAI/bge-large-zh-v1.5`、或本地 `sentence-transformers` 的中文模型。
-- 对于没有原生 embeddings 的 LLM（如部分 Claude 旧型号），可以配对 Voyage / Nomic / 本地 HF 模型。
+- `openai`: `gpt-4o`, `gpt-4`, `gpt-3.5-turbo`
+- `anthropic`: `claude-3-5-sonnet-20241022`（示例）
+- `google`: `gemini-2.0-flash`
+- `ollama`（本地镜像示例）: `qwen2.5:7b`, `qwen2.5:14b`, `llama2:7b`
+- `deepseek`: `deepseek-chat`（普通），`deepseek-reasoner`（专用的 reasoning wrapper）
+- `mistral`: `mistral-large-latest`
 """)
 
-st.header("推荐快速参考表")
+st.header("本地与自定义包装器说明")
 st.markdown("""
-- `openai` LLM: `gpt-4o-mini`； Embedding: `text-embedding-3-small`。
-- `anthropic` LLM: `claude-3-...`； Embedding: `voyage-3`（via Voyage 插件）。
-- `google` LLM: `gemini-2.0-flash`； Embedding: `models/text-embedding-004`。
-- `ollama`（本地）: 按本地镜像名选择；Embedding: `nomic-embed-text`。
+- `DeepSeekR1ChatOpenAI` / `DeepSeekR1ChatOllama`：项目对 DeepSeek R1 做了自定义封装，返回结果中可能包含 `reasoning_content`（可用于展示链式推理或中间思路）。
+- `Ollama`：默认 `OLLAMA_ENDPOINT` 为 `http://localhost:11434`，本地模型通过 `ChatOllama` 访问，不强制要求 API Key，但需在设置中填写 `OLLAMA_ENDPOINT`（若未使用默认地址）。
 """)
 
-st.header("如何选择")
+st.header("配置要点")
 st.markdown("""
-- 优先考虑成本/延迟/隐私：如果数据敏感，优先本地 Embeddings + 本地 LLM。 
-- 如果希望高准确率与较好可解释性，优先使用大模型 + 高质量 embedding。
-- 在教学中建议先用 `sentence-transformers` 做本地 Embedding，逐步演示云服务接入。
+- API Key 环境变量示例（按 provider）：`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `AZURE_OPENAI` 相关变量等。
+- 本地 Ollama：设置 `OLLAMA_ENDPOINT`（示例：`http://localhost:11434`）。
+- IBM WatsonX 需要 `IBM_PROJECT_ID`（见 `app/llm/llm_provider.py` 中的说明，Streamlit的前端界面中没做适配，使用会报错）。
+- 项目会优先从 kwargs 中读取参数，若未提供则从环境变量加载。也可通过页面右下角的设置弹窗在运行时填写（`app.module.streamlit_settings_dialog.settings_button`）。
 """)
 
-st.info("提示：如果需要，我可以把这张推荐表转换成可下载的 CSV 或漂亮的表格页面。")
+st.header("选型与使用建议")
+st.markdown("""
+- 成本/延迟/隐私三角权衡：敏感数据优先本地 Embedding + 本地 LLM；对高准确率与复杂推理需求时优先大模型。
+- 温度设置：教学演示推荐 `0.0 - 0.3` 保持回答确定性；探索性任务可提高温度。
+- 若使用 DeepSeek 的 `reasoner` 模型，注意解析返回的 `reasoning_content`（项目包装器会把中间推理与最终回答分离）。
+""")
+
+st.header("调试小贴士")
+st.markdown("""
+- 若出现认证错误，先确认对应的环境变量已设置或在设置弹窗中填写正确的 key/endpoint。
+- 本地 Ollama 无响应时，确认 Ollama 服务已启动并能在 `OLLAMA_ENDPOINT` 访问。
+- 若模型返回包含思考标记（例如 `<think>`/`</think>`），项目包装器会在部分 provider 中做提取与清洗。
+""")
+
+st.info("如需，我可以把本页生成一份可下载的 CSV 列表，或按 provider 生成更详尽的示例与调用代码片段。")
 
 bottom_bar(previous_alias="Usage Guide", previous_page="pages/02_Usage_Guide.py",
            next_alias="FAQ", next_page="pages/04_FAQ.py")

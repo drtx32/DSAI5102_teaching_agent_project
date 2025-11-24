@@ -10,43 +10,36 @@ ask_ai_button()
 st.title("❓ 常见问题（FAQ）与排错")
 
 st.markdown("""
-列出项目常见问题与排错步骤，便于课堂上快速解决学生遇到的问题。
-""")
-
-st.header("上传与解析 ".strip())
-st.markdown("""
-- 问：上传 .docx 后没有文本或报错 `BadZipFile`？
-  - 答：说明文件可能不是正确的 `.docx`（例如改后缀的 .doc）。请打开 Word 另存为 `.docx` 后重试。
-
-- 问：分块后信息丢失？
-  - 答：尝试增加 `chunk_size` 或减少 `chunk_overlap`，并确认文档中是否存在大量非文本对象（表格/图片）。
+列出项目常见问题与排错步骤，便于快速解决学生遇到的问题。
 """)
 
 st.header("API 与模型调用")
 st.markdown("""
 - 问：‘创建嵌入模型失败’/‘Model call error’？
   - 答：先确认 API Key 是否设置（环境变量或在设置弹窗中填写），并确认对应 provider 的包已安装。
+""")
 
-- 问：某些 provider 返回结构不同，文本无法抽取？
-  - 答：我们在 `call_llm()` 中做了兼容处理（`invoke`、`generate`、可调用对象），如果遇见新类型，请把返回样例贴给我帮适配。
+
+st.header("会话启动 ".strip())
+st.markdown("""
+- 问：我配置了 `secrets.toml` 后怎么不能直接对话？
+  - 答：需要点击右下角设置按钮，在弹窗中点击保存设置后才能生效。
+
+- 问：AI 为什么搜索不了网页？
+  - 答：本项目使用的是Duckduckgo_search (ddgs)，它不需要 API Key，但由于内地访问限制，可能无法正常使用。
 """)
 
 st.header("Streamlit UI 问题")
 st.markdown("""
-- 问：设置按钮尝试浮动但不在预期位置？
-  - 答：Streamlit 的 iframe 结构对自定义浮动元素支持有限。项目最终把按钮放在侧边栏顶部以保证兼容性。
+- 问：首次加载页面或切换页面时，Settings和Ask AI按钮会有闪烁？
+  - 答：Streamlit 的结构对自定义浮动元素支持有限。我们通过 Streamlit_float 第三方component来实现悬浮效果（重写了部分代码以兼容最新的Streamlit）。
 
-- 问：要把教学内容做得更丰富，是否必须在 `pages/` 下写文件？
-  - 答：推荐使用 `pages/` 多页面结构（每个页面为独立 `.py`），比把所有内容塞在 `app.py` 更清晰，也便于课堂分段展示。
+- 问：我想后续丰富和改进内容，能不能告诉我主要修改的地方？
+  - 答：如果添加更多的 Streamlit 页面，推荐使用 `pages/` 多页面结构（每个页面为独立 `.py`），比把所有内容塞在 `首页.py` 更清晰，也便于课堂分段展示。
+  - 另外，`app/module/` 目录下的模块化组件可以复用到各个页面，便于维护和扩展。
+  - 想要添加工具（Tool）或自定义 Agent，可以修改 `app/agent/`（添加工具还需要修改 `app/mcp/`）目录下的代码。
+  - 如果想添加更多 AI 模型支持，可以在 `app/llm/` 目录下添加对应的模型调用代码。
 """)
-
-st.header("如果需要我可以帮你：")
-st.markdown("""
-- 自动把侧边栏导航改成链接到 `pages/` 页（或在主页面嵌入页面内容）。
-- 为每个页面添加示例数据、截图或交互式演示（例如：在线嵌入示例、显式向量可视化）。
-""")
-
-st.success("如需我现在把侧边栏导航替换为指向这些页面的链接或在页面中加入示例数据，请告诉我我会继续修改。")
 
 bottom_bar(previous_page="pages/02_Usage_Guide.py",
            previous_alias="Usage Guide")

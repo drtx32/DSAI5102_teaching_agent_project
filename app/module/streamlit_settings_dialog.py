@@ -3,7 +3,6 @@ from typing import Optional
 import os
 import streamlit as st
 from ..llm.llm_provider import model_names
-from ..agent.worker import LangGraphWorker
 
 
 # -----------------------------
@@ -23,7 +22,7 @@ def read_secret(name: str, default: Optional[str] = None) -> Optional[str]:
 # -----------------------------
 # 设置弹窗（st.dialog）
 # -----------------------------
-@st.dialog("⚙️ 设置与参数", width="medium")
+@st.dialog("⚙️ 设置", width="medium")
 def show_settings():
     st.markdown("**模型参数**")
     default_provider = read_secret("LLM_PROVIDER", "OpenAI")

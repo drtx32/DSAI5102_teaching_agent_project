@@ -1,14 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-DOCX RAG Chatbot — LangChain + FAISS + Streamlit
-- Multiple .docx uploads with validation (avoid BadZipFile)
-- Chinese-friendly splitting (compatible with multilingual docs)
-- Similarity threshold filter + MMR deduplication
-- Build FAISS vector index with progress bar and loading indicator
-- Session cache (one-time indexing, multi-turn QA)
-- Secure configuration reading: environment variable > st.secrets
-"""
-
 import base64
 
 import streamlit as st
