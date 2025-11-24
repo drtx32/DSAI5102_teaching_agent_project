@@ -63,7 +63,5 @@ st.markdown("""
 - 若模型返回包含思考标记（例如 `<think>`/`</think>`），项目包装器会在部分 provider 中做提取与清洗。
 """)
 
-st.info("如需，我可以把本页生成一份可下载的 CSV 列表，或按 provider 生成更详尽的示例与调用代码片段。")
-
 bottom_bar(previous_alias="Usage Guide", previous_page="pages/02_Usage_Guide.py",
            next_alias="FAQ", next_page="pages/04_FAQ.py")
