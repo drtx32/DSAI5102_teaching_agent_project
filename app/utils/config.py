@@ -84,19 +84,5 @@ class Settings(BaseSettings):
     sentence_transformers_model: str = os.getenv(
         "SENTENCE_TRANSFORMERS_MODEL", "all-mpnet-base-v2")
 
-    # 向量数据库配置
-    chroma_persist_directory: str = "./chroma_db"
-
-    # PostgreSQL配置
-    postgres_host: str = os.getenv("POSTGRES_HOST", "localhost")
-    postgres_port: int = int(os.getenv("POSTGRES_PORT", "5432"))
-    postgres_user: str = os.getenv("POSTGRES_USER", "")
-    postgres_password: str = os.getenv("POSTGRES_PASSWORD", "")
-    postgres_db: str = os.getenv("POSTGRES_DB", "agent_memory")
-
-    # 文档处理配置
-    chunk_size: int = 1000
-    chunk_overlap: int = 200
-
 
 settings = Settings()

@@ -1,0 +1,68 @@
+# -*- coding: utf-8 -*-
+"""
+DOCX RAG Chatbot — LangChain + FAISS + Streamlit
+- Multiple .docx uploads with validation (avoid BadZipFile)
+- Chinese-friendly splitting (compatible with multilingual docs)
+- Similarity threshold filter + MMR deduplication
+- Build FAISS vector index with progress bar and loading indicator
+- Session cache (one-time indexing, multi-turn QA)
+- Secure configuration reading: environment variable > st.secrets
+"""
+
+from typing import List, Dict, Any
+import importlib
+import os
+import base64
+
+import streamlit as st
+from app.module.streamlit_bottom_bar import bottom_bar
+from app.module.streamlit_ask_ai_dialog import ask_ai_button
+from app.module.streamlit_settings_dialog import settings_button
+from streamlit.components.v1 import html, iframe
+from langchain_community.document_loaders import Docx2txtLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+
+# -----------------------------
+# Page configuration & styles
+# -----------------------------
+st.set_page_config(
+    page_title="AMA5102 Project Homepage",
+    page_icon=":computer:",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+settings_button()
+ask_ai_button()
+
+# Light UI styling
+st.markdown("""
+<style>
+.block-container {padding-top: 1.3rem; padding-bottom: 2rem;}
+.stChatMessage p {font-size:1.02rem; line-height:1.6;}
+section[data-testid="stSidebar"] .st-emotion-cache-1vt4y43 {margin-bottom: 0.5rem;}
+code, pre {font-size: 0.92rem;}
+</style>
+""", unsafe_allow_html=True)
+
+st.title(":computer: Principles of Data Science")
+st.caption(
+    "LangGraph + LangChain + MCP(websearch & rag) + Streamlit")
+
+# -----------------------------
+# Main documentation content
+# -----------------------------
+documentation = st.container(width=1200)
+
+with documentation:
+    st.markdown("## 📖 首页")
+    with open("assets/index.svg", "rb") as f:
+        svg_base64 = base64.b64encode(f.read()).decode()
+    html(f'''
+        <img src="data:image/svg+xml;base64,{svg_base64}" style="width: 100%;">
+    ''', height=520)
+
+
+bottom_bar(next_page="pages/01_Project_Introduction.py",
+           next_alias="Project Introduction")

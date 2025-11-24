@@ -2,9 +2,48 @@ import streamlit as st
 from streamlit_ace import st_ace
 import uuid
 from app.agent.agent_builder import TeachingAgent
+from app.agent.llm_provider import PROVIDER_DISPLAY_NAMES
 from app.rag.vector_store import RAGVectorStore
 from app.utils.logging_config import logger
 from app.utils.config import settings
+
+
+@st.dialog("创建教学 Agent")
+def create_agent_dialog():
+    # 模型提供商选择
+    provider = st.selectbox(
+        "选择模型提供商",
+        options=list(PROVIDER_DISPLAY_NAMES.keys()),
+        format_func=lambda x: PROVIDER_DISPLAY_NAMES[x],
+        index=0
+    )
+
+    # 模型名称输入
+    model = st.text_input(
+        "模型名称",
+        value=settings.openai_model  # 默认值从环境变量获取
+    )
+
+    # API Key 输入
+    api_key = st.text_input(
+        "API Key",
+        value=settings.openai_api_key,  # 默认值从环境变量获取
+        type="password"
+    )
+
+    # 提交按钮
+    if st.button("确认创建"):
+        try:
+            st.session_state.agent = TeachingAgent(
+                session_id=st.session_state.session_id,
+                provider=provider,
+                model=model,
+                api_key=api_key
+            )
+            st.success("Agent 已成功创建！")
+        except Exception as e:
+            st.error(f"创建 Agent 失败: {e}")
+
 
 # 初始化页面
 st.set_page_config(page_title="DSAI5102教学辅助Agent", layout="wide")
@@ -61,12 +100,8 @@ with st.sidebar:
 
     # Agent 创建/重建控件
     if st.button("创建/重建 Agent"):
-        try:
-            st.session_state.agent = TeachingAgent(
-                session_id=st.session_state.session_id)
-            st.success("Agent 已创建")
-        except Exception as e:
-            st.error(f"创建 Agent 失败: {e}")
+        create_agent_dialog()
+
 
 # 代码编辑器
 st.subheader("💻 代码执行区")

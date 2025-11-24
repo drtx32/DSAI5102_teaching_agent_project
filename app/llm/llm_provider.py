@@ -2,12 +2,28 @@
 LLM Provider Factory - 支持多个AI服务商
 """
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Sequence, Callable, Literal
 from openai import OpenAI
 
 from langchain_core.language_models.base import LanguageModelInput
 from langchain_core.messages import AIMessage, SystemMessage, BaseMessage
-from langchain_core.runnables import RunnableConfig
+from langchain_core.runnables import RunnableConfig, Runnable
+from langchain_core.tools.base import BaseTool
+from langchain.chat_models import BaseChatModel
+from langchain_openai.chat_models.base import _DictOrPydanticClass
+try:
+    from langchain_openai import ChatOpenAI
+    from langchain_ollama import ChatOllama
+    from langchain_openai import AzureChatOpenAI
+except ImportError:
+    from langchain.chat_models import ChatOpenAI
+    from langchain.chat_models import ChatOllama
+    from langchain.chat_models import AzureChatOpenAI
+from langchain_ibm import ChatWatsonx
+from langchain_anthropic import ChatAnthropic
+from langchain_mistralai import ChatMistralAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 
 # Provider Display Names
 PROVIDER_DISPLAY_NAMES = {
@@ -121,11 +137,6 @@ class DeepSeekR1ChatOpenAI:
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         # 延迟导入 ChatOpenAI
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         self.base_model = ChatOpenAI(*args, **kwargs)
         self.model_name = kwargs.get("model_name", "deepseek-reasoner")
         self.client = OpenAI(
@@ -155,7 +166,7 @@ class DeepSeekR1ChatOpenAI:
 
         response = self.client.chat.completions.create(
             model=self.model_name,
-            messages=message_history
+            messages=message_history,
         )
 
         reasoning_content = response.choices[0].message.reasoning_content
@@ -191,16 +202,31 @@ class DeepSeekR1ChatOpenAI:
         content = response.choices[0].message.content
         return AIMessage(content=content, reasoning_content=reasoning_content)
 
+    def bind_tools(
+        self,
+        tools: Sequence[dict[str, Any] | type | Callable | BaseTool],
+        *,
+        tool_choice: dict | str | bool | None = None,
+        strict: bool | None = None,
+        parallel_tool_calls: bool | None = None,
+        response_format: _DictOrPydanticClass | None = None,
+        **kwargs: Any,
+    ) -> Runnable[LanguageModelInput, AIMessage]:
+        """绑定工具到基础模型"""
+        return self.base_model.bind_tools(
+            tools,
+            tool_choice=tool_choice,
+            strict=strict,
+            parallel_tool_calls=parallel_tool_calls,
+            response_format=response_format,
+            **kwargs,
+        )
+
 
 class DeepSeekR1ChatOllama:
     """Ollama DeepSeek R1 模型的自定义包装器"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        try:
-            from langchain_ollama import ChatOllama
-        except ImportError:
-            from langchain.chat_models import ChatOllama
-
         self.base_model = ChatOllama(*args, **kwargs)
 
     async def ainvoke(
@@ -237,8 +263,22 @@ class DeepSeekR1ChatOllama:
             content = content.split("**JSON Response:**")[-1]
         return AIMessage(content=content, reasoning_content=reasoning_content)
 
+    def bind_tools(
+        self,
+        tools: Sequence[dict[str, Any] | type | Callable | BaseTool],
+        *,
+        tool_choice: dict | str | Literal["auto", "any"] | bool | None = None,  # noqa: PYI051, ARG002
+        **kwargs: Any,
+    ) -> Runnable[LanguageModelInput, AIMessage]:
+        """绑定工具到基础模型"""
+        return self.base_model.bind_tools(
+            tools,
+            tool_choice=tool_choice,
+            **kwargs,
+        )
 
-def get_llm_model(provider: str, **kwargs):
+
+def get_llm_model(provider: str, **kwargs) -> ChatAnthropic | ChatMistralAI | ChatOpenAI | DeepSeekR1ChatOllama | DeepSeekR1ChatOpenAI | ChatGoogleGenerativeAI | ChatOllama | AzureChatOpenAI | ChatWatsonx:
     """
     获取LLM模型实例
 
@@ -265,8 +305,6 @@ def get_llm_model(provider: str, **kwargs):
 
     # 根据provider创建对应的LLM实例
     if provider == "anthropic":
-        from langchain_anthropic import ChatAnthropic
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("ANTHROPIC_ENDPOINT",
                                  "https://api.anthropic.com")
@@ -281,8 +319,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == 'mistral':
-        from langchain_mistralai import ChatMistralAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("MISTRAL_ENDPOINT",
                                  "https://api.mistral.ai/v1")
@@ -297,11 +333,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "openai":
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv(
                 "OPENAI_ENDPOINT", "https://api.openai.com/v1")
@@ -316,11 +347,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "grok":
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("GROK_ENDPOINT", "https://api.x.ai/v1")
         else:
@@ -348,11 +374,6 @@ def get_llm_model(provider: str, **kwargs):
                 api_key=kwargs["api_key"],
             )
         else:
-            try:
-                from langchain_openai import ChatOpenAI
-            except ImportError:
-                from langchain.chat_models import ChatOpenAI
-
             return ChatOpenAI(
                 model=kwargs.get("model_name", "deepseek-chat"),
                 temperature=kwargs.get("temperature", 0.0),
@@ -361,8 +382,6 @@ def get_llm_model(provider: str, **kwargs):
             )
 
     elif provider == "google":
-        from langchain_google_genai import ChatGoogleGenerativeAI
-
         return ChatGoogleGenerativeAI(
             model=kwargs.get("model_name", "gemini-2.0-flash"),
             temperature=kwargs.get("temperature", 0.0),
@@ -370,11 +389,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "ollama":
-        try:
-            from langchain_ollama import ChatOllama
-        except ImportError:
-            from langchain.chat_models import ChatOllama
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("OLLAMA_ENDPOINT", "http://localhost:11434")
         else:
@@ -397,11 +411,6 @@ def get_llm_model(provider: str, **kwargs):
             )
 
     elif provider == "azure_openai":
-        try:
-            from langchain_openai import AzureChatOpenAI
-        except ImportError:
-            from langchain.chat_models import AzureChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("AZURE_OPENAI_ENDPOINT", "")
         else:
@@ -419,11 +428,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "alibaba":
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv(
                 "ALIBABA_ENDPOINT", "https://dashscope.aliyuncs.com/compatible-mode/v1")
@@ -438,8 +442,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "ibm":
-        from langchain_ibm import ChatWatsonx
-
         parameters = {
             "temperature": kwargs.get("temperature", 0.0),
             "max_tokens": kwargs.get("num_ctx", 32000)
@@ -461,11 +463,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "moonshot":
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("MOONSHOT_ENDPOINT",
                                  "https://api.moonshot.cn/v1")
@@ -480,11 +477,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "unbound":
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("UNBOUND_ENDPOINT",
                                  "https://api.getunbound.ai")
@@ -499,11 +491,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "siliconflow":
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("SILICONFLOW_ENDPOINT",
                                  "https://api.siliconflow.cn/v1")
@@ -518,11 +505,6 @@ def get_llm_model(provider: str, **kwargs):
         )
 
     elif provider == "modelscope":
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            from langchain.chat_models import ChatOpenAI
-
         if not kwargs.get("base_url", ""):
             base_url = os.getenv("MODELSCOPE_ENDPOINT",
                                  "https://api-inference.modelscope.cn/v1")

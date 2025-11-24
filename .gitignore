@@ -4,6 +4,9 @@ __pycache__/
 
 logs/
 build/
+assets/pdfs/
+vectordb/
+.streamlit/secrets.toml
 
 DS_Store
 *.log

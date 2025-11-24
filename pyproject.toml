@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "teaching-agent"
 version = "0.1.0"
-description = "Teaching assistant agent with RAG and multiple LLM providers"
+description = "Teaching assistant agent with mcp servers"
 readme = "README.md"
 requires-python = ">=3.10"
 
@@ -19,8 +19,10 @@ dependencies = [
     "langchain-ibm",
     "sentence-transformers",
     "openai",
-    "chromadb",
+    "faiss-cpu",
     "streamlit",
     "pydantic-settings",
     "PyPDF2",
+    "pdfplumber",
+    "ddgs"
 ]
