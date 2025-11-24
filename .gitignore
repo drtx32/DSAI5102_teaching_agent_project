@@ -7,6 +7,7 @@ build/
 assets/pdfs/
 vectordb/
 .streamlit/secrets.toml
+app/module/backup/
 
 DS_Store
 *.log

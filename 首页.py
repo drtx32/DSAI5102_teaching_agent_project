@@ -9,19 +9,13 @@ DOCX RAG Chatbot — LangChain + FAISS + Streamlit
 - Secure configuration reading: environment variable > st.secrets
 """
 
-from typing import List, Dict, Any
-import importlib
-import os
 import base64
 
 import streamlit as st
 from app.module.streamlit_bottom_bar import bottom_bar
 from app.module.streamlit_ask_ai_dialog import ask_ai_button
 from app.module.streamlit_settings_dialog import settings_button
-from streamlit.components.v1 import html, iframe
-from langchain_community.document_loaders import Docx2txtLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
+from streamlit.components.v1 import html
 
 # -----------------------------
 # Page configuration & styles
