@@ -26,6 +26,8 @@ def ask_ai() -> None:
             "content": "您好！我是您的数据科学助教AI，能够使用RAG和网页搜索的功能。"
             "请随时向我提问。"}]
 
+    placeholder = st.container(height=800, border=False)
+
     if len(st.session_state.messages) == 1:
         majors = placeholder.pills("your major (multi-choices):", options=[
             "finance", "computer science", "biology", "chemistry", "physics",
@@ -38,7 +40,6 @@ def ask_ai() -> None:
         ], selection_mode="multi")
 
     # Display previous messages
-    placeholder = st.container(height=800, border=False)
     for msg in st.session_state.messages:
         with placeholder.chat_message(msg["role"]):
             st.markdown(msg["content"])

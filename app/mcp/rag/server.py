@@ -23,7 +23,7 @@ embedder = OllamaEmbeddings(model="nomic-embed-text")
 # =====================================================
 # MCP Server
 # =====================================================
-mcp = FastMCP("rag-server", port=8002)
+mcp = FastMCP("rag-server", port=8882)
 
 
 # =====================================================

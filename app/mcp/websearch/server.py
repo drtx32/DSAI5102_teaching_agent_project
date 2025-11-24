@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-mcp = FastMCP("websearch-server", port=8001)
+mcp = FastMCP("websearch-server", port=8881)
 
 
 @mcp.tool()

@@ -55,8 +55,8 @@ st.markdown("""
   - 参见启动脚本：[main.py](main.py)
 
 - 单独启动：
-  - 启动 RAG MCP：`python app/mcp/rag/server.py`（服务监听端口 8002，参考：[`app.mcp.rag.server.RAGVectorStore`](app/mcp/rag/server.py)）
-  - 启动 WebSearch MCP：`python app/mcp/websearch/server.py`（端口 8001）
+  - 启动 RAG MCP：`python app/mcp/rag/server.py`（服务监听端口 8882，参考：[`app.mcp.rag.server.RAGVectorStore`](app/mcp/rag/server.py)）
+  - 启动 WebSearch MCP：`python app/mcp/websearch/server.py`（端口 8881）
   - 仅启动前端：`streamlit run 首页.py` 或 `streamlit run app.py`
 
 注意：RAG 服务从 `vectordb/faiss` 加载索引（见：[`app/mcp/rag/server.py`](app/mcp/rag/server.py)），如更新索引可调用 RAG 的 reload 工具或重启服务。

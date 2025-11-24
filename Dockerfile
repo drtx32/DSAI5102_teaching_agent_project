@@ -18,4 +18,4 @@ RUN uv pip install .
 EXPOSE 8501
 
 # 启动命令
-CMD ["streamlit", "run", "app/main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["python", "main.py"]

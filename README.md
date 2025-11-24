@@ -43,7 +43,7 @@ python main.py
 - 单独启动：
 	- RAG MCP：`python app/mcp/rag/server.py`（默认监听端口 8002）。
 	- WebSearch MCP：`python app/mcp/websearch/server.py`（默认监听端口 8001）。
-	- 前端：
+	- 前端：`streamlit run 首页.py`
 
 ```powershell
 streamlit run 首页.py

@@ -107,11 +107,11 @@ class LangGraphWorker(threading.Thread):
 
         self.connections = {
             "websearch": {
-                "url": "http://127.0.0.1:8001/mcp",
+                "url": "http://127.0.0.1:8881/mcp",
                 "transport": "streamable_http",
             },
             "rag": {
-                "url": "http://127.0.0.1:8002/mcp",
+                "url": "http://127.0.0.1:8882/mcp",
                 "transport": "streamable_http",
             }
         }
