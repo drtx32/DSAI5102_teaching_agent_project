@@ -20,7 +20,7 @@ st.markdown("""
 """)
 
 
-st.header("会话启动 ".strip())
+st.header("会话启动")
 st.markdown("""
 - 问：我配置了 `secrets.toml` 后怎么不能直接对话？
   - 答：需要点击右下角设置按钮，在弹窗中点击保存设置后才能生效。
@@ -33,7 +33,10 @@ st.header("Streamlit UI 问题")
 st.markdown("""
 - 问：首次加载页面或切换页面时，Settings和Ask AI按钮会有闪烁？
   - 答：Streamlit 的结构对自定义浮动元素支持有限。我们通过 Streamlit_float 第三方component来实现悬浮效果（重写了部分代码以兼容最新的Streamlit）。
+""")
 
+st.header("二次开发相关")
+st.markdown("""
 - 问：我想后续丰富和改进内容，能不能告诉我主要修改的地方？
   - 答：如果添加更多的 Streamlit 页面，推荐使用 `pages/` 多页面结构（每个页面为独立 `.py`），比把所有内容塞在 `首页.py` 更清晰，也便于课堂分段展示。
   - 另外，`app/module/` 目录下的模块化组件可以复用到各个页面，便于维护和扩展。
