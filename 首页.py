@@ -33,6 +33,8 @@ code, pre {font-size: 0.92rem;}
 st.title(":computer: Principles of Data Science")
 st.caption(
     "LangGraph + LangChain + MCP(websearch & rag) + Streamlit")
+st.caption("Github Repository: "
+            "[DSAI5102_teaching_agent_project](https://github.com/drtx32/DSAI5102_teaching_agent_project)")
 
 # -----------------------------
 # Main documentation content
