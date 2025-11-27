@@ -1,7 +1,7 @@
 import streamlit as st
-from app.module.streamlit_bottom_bar import bottom_bar
-from app.module.streamlit_ask_ai_dialog import ask_ai_button
-from app.module.streamlit_settings_dialog import settings_button
+from teaching_agent.module.streamlit_bottom_bar import bottom_bar
+from teaching_agent.module.streamlit_ask_ai_dialog import ask_ai_button
+from teaching_agent.module.streamlit_settings_dialog import settings_button
 
 st.set_page_config(page_title="模型说明", page_icon="🤖")
 settings_button()
@@ -9,7 +9,7 @@ ask_ai_button()
 
 st.title("🤖 模型说明")
 st.markdown("""
-本页基于 `app/llm/llm_provider.py` 的实现，列出当前项目已支持的 LLM 提供商、示例 model 名称、配置要点与选型建议。只包含已实现的功能与包装器说明。
+本页基于 `teaching_agent/llm/llm_provider.py` 的实现，列出当前项目已支持的 LLM 提供商、示例 model 名称、配置要点与选型建议。只包含已实现的功能与包装器说明。
 """)
 
 st.header("可用 Provider（已实现/常用）")
@@ -45,8 +45,8 @@ st.header("配置要点")
 st.markdown("""
 - API Key 环境变量示例（按 provider）：`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `AZURE_OPENAI` 相关变量等。
 - 本地 Ollama：设置 `OLLAMA_ENDPOINT`（示例：`http://localhost:11434`）。
-- IBM WatsonX 需要 `IBM_PROJECT_ID`（见 `app/llm/llm_provider.py` 中的说明，Streamlit的前端界面中没做适配，使用会报错）。
-- 项目会优先从 kwargs 中读取参数，若未提供则从环境变量加载。也可通过页面右下角的设置弹窗在运行时填写（`app.module.streamlit_settings_dialog.settings_button`）。
+- IBM WatsonX 需要 `IBM_PROJECT_ID`（见 `teaching_agent/llm/llm_provider.py` 中的说明，Streamlit的前端界面中没做适配，使用会报错）。
+- 项目会优先从 kwargs 中读取参数，若未提供则从环境变量加载。也可通过页面右下角的设置弹窗在运行时填写（`teaching_agent.module.streamlit_settings_dialog.settings_button`）。
 """)
 
 st.header("选型与使用建议")

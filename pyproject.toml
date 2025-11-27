@@ -62,3 +62,30 @@ dev = [
     "black>=24.0.0",
     "ruff>=0.8.0",
 ]
+
+# 配置仅打包teaching_agent目录
+[tool.setuptools]
+packages = ["teaching_agent"]  # 只打包teaching_agent目录
+package-dir = {"" = "."}  # teaching_agent包在项目根目录下
+
+# 可选：包含teaching_agent目录下的非Python文件（如资源、配置文件）
+[tool.setuptools.package-data]
+teaching_agent = [
+    "*.json", 
+    "*.yml", 
+    "*.yaml", 
+    "*.txt", 
+    "templates/*", 
+    "static/*"
+]
+
+# 排除不需要的文件
+[tool.setuptools.exclude-package-data]
+teaching_agent = [
+    "__pycache__", 
+    "*.pyc", 
+    "*.pyo", 
+    "*.pyd",
+    ".gitignore",
+    ".env*"
+]

@@ -1,7 +1,7 @@
 import streamlit as st
-from app.module.streamlit_bottom_bar import bottom_bar
-from app.module.streamlit_ask_ai_dialog import ask_ai_button
-from app.module.streamlit_settings_dialog import settings_button
+from teaching_agent.module.streamlit_bottom_bar import bottom_bar
+from teaching_agent.module.streamlit_ask_ai_dialog import ask_ai_button
+from teaching_agent.module.streamlit_settings_dialog import settings_button
 
 st.set_page_config(page_title="FAQ", page_icon="❓")
 settings_button()
@@ -39,9 +39,9 @@ st.header("二次开发相关")
 st.markdown("""
 - 问：我想后续丰富和改进内容，能不能告诉我主要修改的地方？
   - 答：如果添加更多的 Streamlit 页面，推荐使用 `pages/` 多页面结构（每个页面为独立 `.py`），比把所有内容塞在 `首页.py` 更清晰，也便于课堂分段展示。
-  - 另外，`app/module/` 目录下的模块化组件可以复用到各个页面，便于维护和扩展。
-  - 想要添加工具（Tool）或自定义 Agent，可以修改 `app/agent/`（添加工具还需要修改 `app/mcp/`）目录下的代码。
-  - 如果想添加更多 AI 模型支持，可以在 `app/llm/` 目录下添加对应的模型调用代码。
+  - 另外，`teaching_agent/module/` 目录下的模块化组件可以复用到各个页面，便于维护和扩展。
+  - 想要添加工具（Tool）或自定义 Agent，可以修改 `teaching_agent/agent/`（添加工具还需要修改 `teaching_agent/mcp/`）目录下的代码。
+  - 如果想添加更多 AI 模型支持，可以在 `teaching_agent/llm/` 目录下添加对应的模型调用代码。
 """)
 
 bottom_bar(previous_page="pages/02_Usage_Guide.py",

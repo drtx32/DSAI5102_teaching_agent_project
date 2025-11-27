@@ -2,9 +2,9 @@
 import base64
 
 import streamlit as st
-from app.module.streamlit_bottom_bar import bottom_bar
-from app.module.streamlit_ask_ai_dialog import ask_ai_button
-from app.module.streamlit_settings_dialog import settings_button
+from teaching_agent.module.streamlit_bottom_bar import bottom_bar
+from teaching_agent.module.streamlit_ask_ai_dialog import ask_ai_button
+from teaching_agent.module.streamlit_settings_dialog import settings_button
 from streamlit.components.v1 import html
 
 # -----------------------------

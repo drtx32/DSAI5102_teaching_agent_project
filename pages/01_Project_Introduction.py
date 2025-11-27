@@ -1,7 +1,7 @@
 import streamlit as st
-from app.module.streamlit_bottom_bar import bottom_bar
-from app.module.streamlit_ask_ai_dialog import ask_ai_button
-from app.module.streamlit_settings_dialog import settings_button
+from teaching_agent.module.streamlit_bottom_bar import bottom_bar
+from teaching_agent.module.streamlit_ask_ai_dialog import ask_ai_button
+from teaching_agent.module.streamlit_settings_dialog import settings_button
 
 st.set_page_config(page_title="项目介绍", page_icon="📘")
 settings_button()
@@ -13,13 +13,13 @@ st.markdown("""
 
 - 基本的 Streamlit 前端与多页面框架（主页面为 [首页.py](../首页.py) / `首页.py`），用于展示与交互。
 - 后台的 MCP 服务：
-  - 本地 RAG 服务（`app/mcp/rag/server.py`）管理 FAISS 向量库并提供检索接口（`RAGVectorStore`）。
-  - 网络检索服务（`app/mcp/websearch/server.py`）用于在线搜索与抓取网页内容。
+  - 本地 RAG 服务（`teaching_agent/mcp/rag/server.py`）管理 FAISS 向量库并提供检索接口（`RAGVectorStore`）。
+  - 网络检索服务（`teaching_agent/mcp/websearch/server.py`）用于在线搜索与抓取网页内容。
 - 向量库构建工具：[tools/build_vectordb.py](/tools/build_vectordb.py)，当前以 PDF 为输入样本，生成 embeddings 并保存 FAISS 索引。
 - Embedding 与向量存储采用 Ollama embeddings + FAISS 的组合（在 RAG 服务与构建脚本中使用）。
-- 异步与多线程运行：使用后台线程 / 协程来承载 agent（`app/agent/worker.py` 中的 `app.agent.worker.LangGraphWorker`）与 MCP 客户端，实现非阻塞的聊天交互。
-- 配置与日志：通过 [`app.utils.config.settings`](app/utils/config.py) 读取环境配置，通过 [`app.utils.logging_config.logger`](app/utils/logging_config.py) 记录运行信息。
-- 简单的设置 UI（见 `app/module/streamlit_settings_dialog.py` 的 `app.module.streamlit_settings_dialog.settings_button`），用于输入 provider / API Key 等参数。
+- 异步与多线程运行：使用后台线程 / 协程来承载 agent（`teaching_agent/agent/worker.py` 中的 `teaching_agent.agent.worker.LangGraphWorker`）与 MCP 客户端，实现非阻塞的聊天交互。
+- 配置与日志：通过 [`teaching_agent.utils.config.settings`](teaching_agent/utils/config.py) 读取环境配置，通过 [`teaching_agent.utils.logging_config.logger`](teaching_agent/utils/logging_config.py) 记录运行信息。
+- 简单的设置 UI（见 `teaching_agent/module/streamlit_settings_dialog.py` 的 `teaching_agent.module.streamlit_settings_dialog.settings_button`），用于输入 provider / API Key 等参数。
 
 注意（已去除尚未实现的功能说明）：
 - 当前实现以 PDF 文档处理为主（见构建脚本），`.docx` 的高级兼容性或更多厂商整合尚未完整实现。
