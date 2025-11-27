@@ -51,6 +51,25 @@ python main.py
 streamlit run 首页.py
 ```
 
+- Docker启动：
+	- 前置要求 - Ollama (Docker):
+		```bash
+		docker pull ollama/ollama
+		docker run -d -v ollama_data:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+		docker exec -it ollama /bin/bash
+		# 在ollama docker容器中下载模型
+		>>> ollama pull nomic-embeded-text
+		```
+	- 后台运行
+		```bash
+		chmod +x ./start.sh
+		./start.sh
+		```
+	- 查看日志
+		```bash
+		docker logs -f teaching-agent
+		```
+
 7. 在 Streamlit 页面中使用
 - 点击右下角的设置按钮填写/保存配置（见 `teaching_agent/module/streamlit_settings_dialog.py`），随后使用 Ask AI 按钮（`teaching_agent/module/streamlit_ask_ai_dialog.py`）开启对话与检索式问答。
 
