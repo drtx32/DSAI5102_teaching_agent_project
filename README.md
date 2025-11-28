@@ -58,7 +58,7 @@ streamlit run 首页.py
 		docker run -d -v ollama_data:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 		docker exec -it ollama /bin/bash
 		# 在ollama docker容器中下载模型
-		>>> ollama pull nomic-embeded-text
+		>>> ollama pull nomic-embed-text
 		```
 	- 后台运行
 		```bash
